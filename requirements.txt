@@ -1,0 +1,7 @@
+#pip3 install -r requiremnets.txt
+#pip3 -m pip install --upgrade pip
+fastapi
+uvicorn
+sqlalchemy
+passlib
+bcrypt
