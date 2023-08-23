@@ -3,22 +3,26 @@ from typing import List
 from .. import schemas, database
 from .. import models
 from sqlalchemy.orm import Session
-get_db = database.get_db
+from ..database import get_db
 
-router = APIRouter()
+
+router = APIRouter(
+    prefix='/blog',
+    tags=['blogs']
+    )
 
 
         
-@router.get("/blog", response_model=List[schemas.ShowBlog],  tags=['blogs'])
+@router.get("/", response_model=List[schemas.ShowBlog],  )
 def get_all_blogs(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 
 @router.post(
-    "/blog",
+    "/",
     status_code=status.HTTP_201_CREATED,
-    tags=['blogs']
+
 )
 def create_blog(
     request: schemas.Blog,
@@ -36,7 +40,7 @@ def create_blog(
 
 
 
-@router.get("/blog/{id}",  tags=['blogs'], status_code=200, response_model=schemas.ShowBlog)
+@router.get("/{id}",  status_code=200, response_model=schemas.ShowBlog)
 def get_single_blog(
     id: int,
     db: Session = Depends(
@@ -50,13 +54,11 @@ def get_single_blog(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Blog with the id {id} does not exist",
         )
-        # response.status_code = status.HTTP_404_NOT_FOUND
-        # return {'details': f"Blog with the id {id} does not exist"}
     return blog
 
 
 @router.delete(
-    "/blog/{id}",  tags=['blogs'],
+    "/{id}", 
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_blog(
@@ -79,7 +81,7 @@ def delete_blog(
 
 
 @router.put(
-    "/blog/{id}",  tags=['blogs'],
+    "/{id}", 
     status_code=status.HTTP_202_ACCEPTED,
 )
 def update_blog(id: int, request: schemas.Blog, db: Session = Depends(get_db)):
